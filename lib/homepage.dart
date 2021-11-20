@@ -86,11 +86,18 @@ class HomepageState extends State<Homepage>
   void initializeScrollListeners() {
     _animationControllers["introOut"] = AnimationController(vsync: this);
     _animationControllers["introPhoneOut"] = AnimationController(vsync: this);
+
     _animationControllers["achievementIn"] = AnimationController(vsync: this);
     _animationControllers["achievementLeft"] = AnimationController(vsync: this);
     _animationControllers["achievementRight"] = AnimationController(vsync: this);
     _animationControllers["achievementMid"] = AnimationController(vsync: this);
     _animationControllers["achievementOut"] = AnimationController(vsync: this);
+
+    _animationControllers["leadershipIn"] = AnimationController(vsync: this);
+    _animationControllers["leadershipFTC"] = AnimationController(vsync: this);
+    _animationControllers["leadershipFRC"] = AnimationController(vsync: this);
+    _animationControllers["leadershipOut"] = AnimationController(vsync: this);
+
     // _animationControllers["landingOut"] = AnimationController(vsync: this);
     // _animationControllers["phone1In"] = AnimationController(vsync: this);
     // _animationControllers["text1In"] = AnimationController(vsync: this);
@@ -102,19 +109,18 @@ class HomepageState extends State<Homepage>
 
     setAnimationValueListener("introOut", 0.5, 0.7, false);
     setAnimationValueListener("introPhoneOut", 0.5, 0.7, false);
+
     setAnimationValueListener("achievementIn", 0.7, 0.8, true);
     setAnimationValueListener("achievementLeft", 0.8, 0.95, true);
     setAnimationValueListener("achievementRight", 1.1, 1.25, true);
     setAnimationValueListener("achievementMid", 1.4, 1.55, true);
     setAnimationValueListener("achievementOut", 1.7, 1.8, false);
-    // setAnimationValueListener("landingOut", 0.1, 0.6, false);
-    // setAnimationValueListener("phone1In", 0.2, 0.6, true);
-    // setAnimationValueListener("text1In", 0.4, 0.6, true);
-    // setAnimationValueListener("phone1Out", 0.7, 0.8, false);
-    // setAnimationValueListener("phone2In", 0.8, 0.9, true);
-    // setAnimationValueListener("phone2Out", 1.0, 1.1, false);
-    // setAnimationValueListener("phone3In", 1.1, 1.2, true);
-    // setAnimationValueListener("phone3Out", 1.3, 1.4, false);
+
+    setAnimationValueListener("leadershipIn", 1.8, 1.9, true);
+    setAnimationValueListener("leadershipFTC", 1.95, 2.05, true);
+    setAnimationValueListener("leadershipFRC", 2.4, 2.5, true);
+    setAnimationValueListener("leadershipOut", 2.85, 2.95, false);
+
   }
 
   void setAnimationValueListener(String mapKey, double startingFrame, double endingFrame, bool forward) {
@@ -156,9 +162,13 @@ class HomepageState extends State<Homepage>
       body: Stack(
         alignment: Alignment.center,
         children: [
+          createScaleTransition(
+            mapKey: "leadershipOut",
+            child: createLeadershipSlide()
+          ),
           createAnimatedFade(
             mapKey: "achievementOut",
-            child: createAchievementSlide()
+            child: createExperienceSlide()
           ),
           createSlidingTransition(
               child: createScaleTransition(
@@ -247,7 +257,7 @@ class HomepageState extends State<Homepage>
     );
   }
 
-  Widget createAchievementSlide() {
+  Widget createExperienceSlide() {
     return createAnimatedFade(
       mapKey: "achievementIn",
       child: Row(
@@ -333,7 +343,7 @@ class HomepageState extends State<Homepage>
   Widget middleBlogColumn() => Column(
     children: [
       const Spacer(flex: 2),
-      Text("1. Achievement",
+      Text("1. Experience",
         style: Theme.of(context).textTheme.headline3
             ?.merge(const TextStyle(
             color: Colors.black,
@@ -362,6 +372,61 @@ class HomepageState extends State<Homepage>
       Image.asset("assets/achievement/blogpost.png",
         width: MediaQuery.of(context).size.width * .25,
       ),
+    ]
+  );
+
+  Widget createLeadershipSlide() => createAnimatedFade(
+    mapKey: "leadershipIn",
+    child: Column(
+      children: [
+        const Spacer(flex: 2),
+        Text("2. Leadership",
+            style: Theme.of(context).textTheme.headline3
+                ?.merge(const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold
+            ))
+        ),
+        const Spacer(flex: 2),
+        createRoboticsRow(),
+        const Spacer(),
+      ],
+    ),
+  );
+
+  Widget createRoboticsRow() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+      createSlidingTransition(
+        direction: pi/2,
+        distance: 3,
+        mapKey: "leadershipFTC",
+        child: Image.asset("assets/leadership/ftc_logo.png",
+          width: MediaQuery.of(context).size.width * .3,
+        ),
+      ),
+      createSlidingTransition(
+        direction: pi/2,
+        distance: 3,
+        mapKey: "leadershipFRC",
+        child: Image.asset("assets/leadership/frc_logo.png",
+          width: MediaQuery.of(context).size.width * .3,
+        ),
+      ),
+    ],
+  );
+
+  Widget createAchievementSlide() => Column(
+    children: [
+      const Spacer(flex: 2),
+      Text("3. Achievement",
+          style: Theme.of(context).textTheme.headline3
+              ?.merge(const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold
+          ))
+      ),
+      const Spacer(flex: 2),
     ]
   );
 

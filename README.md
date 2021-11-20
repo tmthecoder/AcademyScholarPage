@@ -1,6 +1,6 @@
 # academy_scholar_page
 
-A project I threw together for the video I recorded as part of my MCST Academy Scholar nomination
+A project I put together for the video I recorded as part of my MCST Academy Scholar application
 
 ## Under the Hood
 

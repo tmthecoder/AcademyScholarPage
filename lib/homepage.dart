@@ -310,9 +310,22 @@ class HomepageState extends State<Homepage>
                 )),
                 const Padding(padding: EdgeInsets.all(20)),
               ],
-            )
+            ),
+            flex: 10,
           ),
           const Padding(padding: EdgeInsets.all(20)),
+          Flexible(
+            child: AnimatedBuilder(
+                animation: _colorTween,
+                builder: (context, _) =>
+                    LayoutBuilder(builder: (context, constraint) =>
+                        Icon(Icons.keyboard_arrow_down,
+                          size: constraint.biggest.height,
+                          color: _colorTween.value,
+                        ),
+                    )
+            ),
+          ),
         ],
       ), mapKey: "introOut"
     );

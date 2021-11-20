@@ -1,11 +1,11 @@
 {
-    "name": "academy_scholar_page",
-    "short_name": "academy_scholar_page",
+    "name": "Tejas Mehta - Comp Sci Academy Scholar Demo",
+    "short_name": "Tejas - Video Demo",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "My academy scholar video animation sequence.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

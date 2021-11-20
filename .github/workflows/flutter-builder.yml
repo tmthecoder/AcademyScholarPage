@@ -34,7 +34,7 @@ jobs:
         git config user.name  "CI"
         git config user.email "flutter-ci@github.com"
         git remote add secure-origin https://${{ secrets.ACCESS_TOKEN }}@github.com/tmthecoder/AcademyScholarPage.git
-        git checkout -b gh-pages
+        git checkout -b pages
         git add .
         git commit -m "Updated built website from code in @tmthecoder/AcademyScholarPage-main"
-        git push --force secure-origin gh-pages
+        git push --force secure-origin pages

@@ -74,8 +74,8 @@ class HomepageState extends State<Homepage>
     _scroll = ScrollController(initialScrollOffset: offset);
     initializeScrollListeners();
     _autoScroller = AnimationController(vsync: this,
-      duration: const Duration(milliseconds: 55000),
-      upperBound: MediaQuery.of(context).size.height * 7,
+      duration: const Duration(milliseconds: 50000),
+      upperBound: MediaQuery.of(context).size.height * 6,
     );
     _autoScroller.addListener(() {
       if (!_autoScroll) return;
@@ -87,45 +87,54 @@ class HomepageState extends State<Homepage>
     _animationControllers["introOut"] = AnimationController(vsync: this);
     _animationControllers["introPhoneOut"] = AnimationController(vsync: this);
 
-    _animationControllers["achievementIn"] = AnimationController(vsync: this);
-    _animationControllers["achievementLeft"] = AnimationController(vsync: this);
-    _animationControllers["achievementRight"] = AnimationController(vsync: this);
-    _animationControllers["achievementMid"] = AnimationController(vsync: this);
-    _animationControllers["achievementOut"] = AnimationController(vsync: this);
+    _animationControllers["experienceIn"] = AnimationController(vsync: this);
+    _animationControllers["experienceLeft"] = AnimationController(vsync: this);
+    _animationControllers["experienceRight"] = AnimationController(vsync: this);
+    _animationControllers["experienceMid"] = AnimationController(vsync: this);
+    _animationControllers["experienceOut"] = AnimationController(vsync: this);
 
     _animationControllers["leadershipIn"] = AnimationController(vsync: this);
     _animationControllers["leadershipFTC"] = AnimationController(vsync: this);
     _animationControllers["leadershipFRC"] = AnimationController(vsync: this);
     _animationControllers["leadershipOut"] = AnimationController(vsync: this);
 
-    // _animationControllers["landingOut"] = AnimationController(vsync: this);
-    // _animationControllers["phone1In"] = AnimationController(vsync: this);
-    // _animationControllers["text1In"] = AnimationController(vsync: this);
-    // _animationControllers["phone1Out"] = AnimationController(vsync: this);
-    // _animationControllers["phone2In"] = AnimationController(vsync: this);
-    // _animationControllers["phone2Out"] = AnimationController(vsync: this);
-    // _animationControllers["phone3In"] = AnimationController(vsync: this);
-    // _animationControllers["phone3Out"] = AnimationController(vsync: this);
+    _animationControllers["achievementIn"] = AnimationController(vsync: this);
+    _animationControllers["achievementWWDCIn"] = AnimationController(vsync: this);
+    _animationControllers["achievementHackMCSTIn"] = AnimationController(vsync: this);
+    _animationControllers["achievementMakeSPPIn"] = AnimationController(vsync: this);
+    _animationControllers["achievementPitchNJIn"] = AnimationController(vsync: this);
+    _animationControllers["achievementOut"] = AnimationController(vsync: this);
+
+    _animationControllers["outroIn"] = AnimationController(vsync: this);
 
     setAnimationValueListener("introOut", 0.5, 0.7, false);
     setAnimationValueListener("introPhoneOut", 0.5, 0.7, false);
 
-    setAnimationValueListener("achievementIn", 0.7, 0.8, true);
-    setAnimationValueListener("achievementLeft", 0.8, 0.95, true);
-    setAnimationValueListener("achievementRight", 1.1, 1.25, true);
-    setAnimationValueListener("achievementMid", 1.4, 1.55, true);
-    setAnimationValueListener("achievementOut", 1.7, 1.8, false);
+    setAnimationValueListener("experienceIn", 0.7, 0.8, true);
+    setAnimationValueListener("experienceLeft", 0.8, 0.95, true);
+    setAnimationValueListener("experienceRight", 1.1, 1.25, true);
+    setAnimationValueListener("experienceMid", 1.4, 1.55, true);
+    setAnimationValueListener("experienceOut", 1.7, 1.8, false);
 
     setAnimationValueListener("leadershipIn", 1.8, 1.9, true);
     setAnimationValueListener("leadershipFTC", 1.95, 2.05, true);
     setAnimationValueListener("leadershipFRC", 2.4, 2.5, true);
     setAnimationValueListener("leadershipOut", 2.85, 2.95, false);
 
+    setAnimationValueListener("achievementIn", 2.9, 3.0, true);
+    setAnimationValueListener("achievementWWDCIn", 3.1, 3.2, true);
+    setAnimationValueListener("achievementHackMCSTIn", 3.4, 3.5, true);
+    setAnimationValueListener("achievementMakeSPPIn", 3.7, 3.8, true);
+    setAnimationValueListener("achievementPitchNJIn", 4.0, 4.1, true);
+    setAnimationValueListener("achievementOut", 4.3, 4.4, false);
+
+    setAnimationValueListener("outroIn", 4.4, 4.5, true);
+
   }
 
   void setAnimationValueListener(String mapKey, double startingFrame, double endingFrame, bool forward) {
     void listener() {
-      double frameStep = _scroll.position.maxScrollExtent / 6;
+      double frameStep = _scroll.position.maxScrollExtent / 5;
       double entryStart = startingFrame * frameStep;
       double entryEnd = endingFrame * frameStep;
       double position = ((_scroll.offset-entryStart)/(entryEnd-entryStart));
@@ -147,13 +156,6 @@ class HomepageState extends State<Homepage>
     WidgetsBinding.instance?.window.platformBrightness;
   }
 
-  // Size _getScaledSize(String animKey, Size origSize) {
-  //   if (_animationControllers[animKey] == null) return origSize;
-  //   double value = _animationControllers[animKey]!.value;
-  //   return Size(origSize.width * value, origSize.height * value);
-  // }
-
-
   ///Main widget build method
   ///Builds the UI on this screen
   @override
@@ -162,12 +164,28 @@ class HomepageState extends State<Homepage>
       body: Stack(
         alignment: Alignment.center,
         children: [
+          createAnimatedFade(
+            mapKey: "outroIn",
+            child: Center(
+              child: Text("Surprise! (and Thank You!)",
+                  style: Theme.of(context).textTheme.headline3
+                      ?.merge(const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold
+                  ))
+              ),
+            ),
+          ),
+          createAnimatedFade(
+            child: createAchievementSlide(),
+            mapKey: "achievementOut"
+          ),
           createScaleTransition(
             mapKey: "leadershipOut",
             child: createLeadershipSlide()
           ),
           createAnimatedFade(
-            mapKey: "achievementOut",
+            mapKey: "experienceOut",
             child: createExperienceSlide()
           ),
           createSlidingTransition(
@@ -180,7 +198,7 @@ class HomepageState extends State<Homepage>
           ListView(
             controller: _scroll,
             children: [
-              Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 7)),
+              Padding(padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 6)),
             ],
           ),
         ],
@@ -201,7 +219,7 @@ class HomepageState extends State<Homepage>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text("5 Reasons Why - Academy Scholar",
+          Text("3 Reasons Why - Academy Scholar",
               style: Theme.of(context).textTheme.headline5
               ?.merge(const TextStyle(fontWeight: FontWeight.bold))
           ),
@@ -259,14 +277,14 @@ class HomepageState extends State<Homepage>
 
   Widget createExperienceSlide() {
     return createAnimatedFade(
-      mapKey: "achievementIn",
+      mapKey: "experienceIn",
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           createSlidingTransition(
             direction: pi,
             distance: 3,
-            mapKey: "achievementLeft",
+            mapKey: "experienceLeft",
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: openSourceColumn(),
@@ -278,7 +296,7 @@ class HomepageState extends State<Homepage>
           createSlidingTransition(
             direction: 0,
             distance: 3,
-            mapKey: "achievementRight",
+            mapKey: "experienceRight",
             child: Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: consumerAppColumn(),
@@ -296,19 +314,19 @@ class HomepageState extends State<Homepage>
             ?.merge(const TextStyle(fontWeight: FontWeight.bold)),
       ),
       const Padding(padding: EdgeInsets.all(10)),
-      Image.asset("assets/achievement/dargon2.png",
+      Image.asset("assets/experience/dargon2.png",
         width: MediaQuery.of(context).size.width * .25,
       ),
       const Padding(padding: EdgeInsets.all(10)),
-      Image.asset("assets/achievement/argon2swift.png",
+      Image.asset("assets/experience/argon2swift.png",
         width: MediaQuery.of(context).size.width * .25,
       ),
       const Padding(padding: EdgeInsets.all(10)),
-      Image.asset("assets/achievement/webrtc.png",
+      Image.asset("assets/experience/webrtc.png",
         width: MediaQuery.of(context).size.width * .25,
       ),
       const Padding(padding: EdgeInsets.all(10)),
-      Image.asset("assets/achievement/odometrycore.png",
+      Image.asset("assets/experience/odometrycore.png",
         width: MediaQuery.of(context).size.width * .25,
       )
     ],
@@ -321,19 +339,19 @@ class HomepageState extends State<Homepage>
             ?.merge(const TextStyle(fontWeight: FontWeight.bold)),
       ),
       const Spacer(flex: 1),
-      clippedImage(Image.asset("assets/achievement/cclip.png",
+      clippedImage(Image.asset("assets/experience/cclip.png",
         width: MediaQuery.of(context).size.width * .05,
       )),
       const Padding(padding: EdgeInsets.all(10)),
-      Image.asset("assets/achievement/cclip_listing.png",
+      Image.asset("assets/experience/cclip_listing.png",
         width: MediaQuery.of(context).size.width * .25,
       ),
       const Spacer(flex: 3),
-      clippedImage(Image.asset("assets/achievement/scoutscore.png",
+      clippedImage(Image.asset("assets/experience/scoutscore.png",
         width: MediaQuery.of(context).size.width * .05,
       )),
       const Padding(padding: EdgeInsets.all(10)),
-      Image.asset("assets/achievement/scoutscore_listing.png",
+      Image.asset("assets/experience/scoutscore_listing.png",
         width: MediaQuery.of(context).size.width * .25,
       ),
       const Spacer(flex: 1),
@@ -354,7 +372,7 @@ class HomepageState extends State<Homepage>
       createSlidingTransition(
         direction: pi/2,
         distance: 3,
-        mapKey: "achievementMid",
+        mapKey: "experienceMid",
         child: blogPost(),
       ),
       const Spacer()
@@ -369,7 +387,7 @@ class HomepageState extends State<Homepage>
             ?.merge(const TextStyle(fontWeight: FontWeight.bold)),
       ),
       const Padding(padding: EdgeInsets.all(10)),
-      Image.asset("assets/achievement/blogpost.png",
+      Image.asset("assets/experience/blogpost.png",
         width: MediaQuery.of(context).size.width * .25,
       ),
     ]
@@ -416,18 +434,58 @@ class HomepageState extends State<Homepage>
     ],
   );
 
-  Widget createAchievementSlide() => Column(
-    children: [
-      const Spacer(flex: 2),
-      Text("3. Achievement",
-          style: Theme.of(context).textTheme.headline3
-              ?.merge(const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold
-          ))
+  Widget createAchievementSlide() => createScaleTransition(
+    mapKey: "achievementIn",
+    child: Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        children: [
+          const Spacer(),
+          createTopAchievementRow(),
+          const Spacer(flex: 2),
+          Text("3. Achievement",
+              style: Theme.of(context).textTheme.headline3
+                  ?.merge(const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold
+              ))
+          ),
+          const Spacer(flex: 2),
+          createBottomAchievementRow(),
+          const Spacer(),
+        ]
       ),
-      const Spacer(flex: 2),
-    ]
+    ),
+  );
+
+  Widget createTopAchievementRow() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      createAchievementItem(5 * pi/4, "WWDCIn", "appleswift.png"),
+      createAchievementItem(7 * pi/4, "PitchNJIn", "pitchnj.png")
+    ],
+  );
+
+  Widget createBottomAchievementRow() => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      createAchievementItem(3 * pi/4, "HackMCSTIn", "hackmcst.png"),
+      createAchievementItem(1 * pi/4, "MakeSPPIn", "makespp.png")
+    ],
+  );
+
+  Widget createAchievementItem(double direction, String inKey, String asset) => createSlidingTransition(
+    direction: -direction,
+    distance: 3,
+    mapKey: "achievementOut",
+    child: createSlidingTransition(
+      direction: direction,
+      distance: 3,
+      mapKey: "achievement$inKey",
+      child: Image.asset("assets/achievement/$asset",
+        width: MediaQuery.of(context).size.width * .2,
+      ),
+    )
   );
 
   Widget clippedImage(Image img) => ClipRRect(

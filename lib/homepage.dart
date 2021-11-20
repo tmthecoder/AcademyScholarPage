@@ -59,6 +59,11 @@ class HomepageState extends State<Homepage>
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
     _animationController.dispose();
+    for (var element in _animationControllers.values) {
+      element.dispose();
+    }
+    _autoScroller.dispose();
+    _fabController.dispose();
     super.dispose();
   }
 
@@ -81,7 +86,11 @@ class HomepageState extends State<Homepage>
   void initializeScrollListeners() {
     _animationControllers["introOut"] = AnimationController(vsync: this);
     _animationControllers["introPhoneOut"] = AnimationController(vsync: this);
-
+    _animationControllers["achievementIn"] = AnimationController(vsync: this);
+    _animationControllers["achievementLeft"] = AnimationController(vsync: this);
+    _animationControllers["achievementRight"] = AnimationController(vsync: this);
+    _animationControllers["achievementMid"] = AnimationController(vsync: this);
+    _animationControllers["achievementOut"] = AnimationController(vsync: this);
     // _animationControllers["landingOut"] = AnimationController(vsync: this);
     // _animationControllers["phone1In"] = AnimationController(vsync: this);
     // _animationControllers["text1In"] = AnimationController(vsync: this);
@@ -91,9 +100,13 @@ class HomepageState extends State<Homepage>
     // _animationControllers["phone3In"] = AnimationController(vsync: this);
     // _animationControllers["phone3Out"] = AnimationController(vsync: this);
 
-    setAnimationValueListener("introOut", 0.4, 0.7, false);
-    setAnimationValueListener("introPhoneOut", 0.4, 0.7, false);
-
+    setAnimationValueListener("introOut", 0.5, 0.7, false);
+    setAnimationValueListener("introPhoneOut", 0.5, 0.7, false);
+    setAnimationValueListener("achievementIn", 0.7, 0.8, true);
+    setAnimationValueListener("achievementLeft", 0.8, 0.95, true);
+    setAnimationValueListener("achievementRight", 1.1, 1.25, true);
+    setAnimationValueListener("achievementMid", 1.4, 1.55, true);
+    setAnimationValueListener("achievementOut", 1.7, 1.8, false);
     // setAnimationValueListener("landingOut", 0.1, 0.6, false);
     // setAnimationValueListener("phone1In", 0.2, 0.6, true);
     // setAnimationValueListener("text1In", 0.4, 0.6, true);
@@ -143,20 +156,10 @@ class HomepageState extends State<Homepage>
       body: Stack(
         alignment: Alignment.center,
         children: [
-          // createPhoneIntro(
-          //   phoneKey: "phone1",
-          //   textKey: "text1",
-          //   headerText: "Seamlessly transfer Text...",
-          //   showSlide: true,
-          // ),
-          // createPhoneIntro(
-          //     phoneKey: "phone2",
-          //     headerText: "Images..."
-          // ),
-          // createPhoneIntro(
-          //     phoneKey: "phone3",
-          //     headerText: "or Files..."
-          // ),
+          createAnimatedFade(
+            mapKey: "achievementOut",
+            child: createAchievementSlide()
+          ),
           createSlidingTransition(
               child: createScaleTransition(
                   child: createIntro(), mapKey: "introOut"),
@@ -182,93 +185,6 @@ class HomepageState extends State<Homepage>
     );
   }
 
-  Widget createTopBar() => SliverAppBar(
-    iconTheme: Theme.of(context).iconTheme,
-    centerTitle: false,
-    floating: true,
-    title: const Text("cClip"),
-    actions: [
-      const Padding(padding: EdgeInsets.all(10)),
-      IconButton(
-          icon: Icon(ThemeController.of(context).isDark ? Icons.wb_sunny : Icons.brightness_3), onPressed: () {
-        ThemeController.of(context).toggleDark();
-      })
-    ],
-  );
-
-  Widget landingColumn() {
-    String theme = ThemeController.of(context).isDark ? "dark" : "light";
-    return Column(
-      children: [
-        const Padding(padding: EdgeInsets.all(10)),
-        Expanded(
-          flex: 20,
-          child: Stack(
-            children: [
-              Center(child: Image.asset("assets/landing_images/$theme/intro_screen.png")),
-            ],
-          ),
-        ),
-        Expanded(
-          child: AnimatedBuilder(
-              animation: _colorTween,
-              builder: (context, _) =>
-                  LayoutBuilder(builder: (context, constraint) =>
-                      Icon(Icons.keyboard_arrow_down,
-                        size: constraint.biggest.height,
-                        color: _colorTween.value,
-                      ),
-                  )
-          ),
-        ),
-        Expanded(child: Container(),)
-      ],
-    );
-  }
-
-  Widget createPhoneIntro({
-    required String phoneKey,
-    required String headerText,
-    String? textKey,
-    bool showSlide = false,
-  }) {
-    Widget text = Text(headerText,
-        style: Theme.of(context).textTheme.headline5
-            ?.merge(const TextStyle(fontWeight: FontWeight.bold))
-    );
-    String theme = ThemeController.of(context).isDark ? "dark" : "light";
-    Widget image = Image.asset("assets/landing_images/$theme/$phoneKey.png",
-      height: MediaQuery.of(context).size.height * .7,
-    );
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        createAnimatedFade(
-          child: createAnimatedFade(
-              child: showSlide ? createSlidingTransition(
-                  child: text,
-                  direction: pi,
-                  distance: 3,
-                  mapKey: "${phoneKey}In"
-              ) : text, mapKey: "${phoneKey}Out",
-          ), mapKey: "${textKey ?? phoneKey}In",
-        ),
-        const Padding(padding: EdgeInsets.all(10)),
-        Flexible(child: createAnimatedFade(
-          child: showSlide ? createSlidingTransition(
-            child: createScaleTransition(
-              child: image,
-              mapKey: "${phoneKey}In"
-            ),
-            direction: 0,
-            distance: 5,
-            mapKey: "${phoneKey}In"
-          ): createAnimatedFade(child: image, mapKey: "${phoneKey}In"),
-          mapKey: "${phoneKey}Out"
-        ))
-      ],
-    );
-  }
 
   Widget createIntro() {
     return createAnimatedFade(
@@ -330,6 +246,129 @@ class HomepageState extends State<Homepage>
       ), mapKey: "introOut"
     );
   }
+
+  Widget createAchievementSlide() {
+    return createAnimatedFade(
+      mapKey: "achievementIn",
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          createSlidingTransition(
+            direction: pi,
+            distance: 3,
+            mapKey: "achievementLeft",
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: openSourceColumn(),
+            ),
+          ),
+          const VerticalDivider(thickness: 2,),
+          middleBlogColumn(),
+          const VerticalDivider(thickness: 2,),
+          createSlidingTransition(
+            direction: 0,
+            distance: 3,
+            mapKey: "achievementRight",
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: consumerAppColumn(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget openSourceColumn() => Column(
+    children: [
+      Text("Six Open-Source Packages",
+        style: Theme.of(context).textTheme.headline6
+            ?.merge(const TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      const Padding(padding: EdgeInsets.all(10)),
+      Image.asset("assets/achievement/dargon2.png",
+        width: MediaQuery.of(context).size.width * .25,
+      ),
+      const Padding(padding: EdgeInsets.all(10)),
+      Image.asset("assets/achievement/argon2swift.png",
+        width: MediaQuery.of(context).size.width * .25,
+      ),
+      const Padding(padding: EdgeInsets.all(10)),
+      Image.asset("assets/achievement/webrtc.png",
+        width: MediaQuery.of(context).size.width * .25,
+      ),
+      const Padding(padding: EdgeInsets.all(10)),
+      Image.asset("assets/achievement/odometrycore.png",
+        width: MediaQuery.of(context).size.width * .25,
+      )
+    ],
+  );
+
+  Widget consumerAppColumn() => Column(
+    children: [
+      Text("Two Published Applications",
+        style: Theme.of(context).textTheme.headline6
+            ?.merge(const TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      const Spacer(flex: 1),
+      clippedImage(Image.asset("assets/achievement/cclip.png",
+        width: MediaQuery.of(context).size.width * .05,
+      )),
+      const Padding(padding: EdgeInsets.all(10)),
+      Image.asset("assets/achievement/cclip_listing.png",
+        width: MediaQuery.of(context).size.width * .25,
+      ),
+      const Spacer(flex: 3),
+      clippedImage(Image.asset("assets/achievement/scoutscore.png",
+        width: MediaQuery.of(context).size.width * .05,
+      )),
+      const Padding(padding: EdgeInsets.all(10)),
+      Image.asset("assets/achievement/scoutscore_listing.png",
+        width: MediaQuery.of(context).size.width * .25,
+      ),
+      const Spacer(flex: 1),
+    ],
+  );
+
+  Widget middleBlogColumn() => Column(
+    children: [
+      const Spacer(flex: 2),
+      Text("1. Achievement",
+        style: Theme.of(context).textTheme.headline3
+            ?.merge(const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold
+        ))
+      ),
+      const Spacer(flex: 3),
+      createSlidingTransition(
+        direction: pi/2,
+        distance: 3,
+        mapKey: "achievementMid",
+        child: blogPost(),
+      ),
+      const Spacer()
+    ],
+  );
+
+  Widget blogPost() => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text("Article Co-Written with Cloudflare",
+        style: Theme.of(context).textTheme.headline6
+            ?.merge(const TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      const Padding(padding: EdgeInsets.all(10)),
+      Image.asset("assets/achievement/blogpost.png",
+        width: MediaQuery.of(context).size.width * .25,
+      ),
+    ]
+  );
+
+  Widget clippedImage(Image img) => ClipRRect(
+    borderRadius: BorderRadius.circular(15),
+    child: img,
+  );
 
   Widget createSlidingTransition({
     required Widget child,
